@@ -21,29 +21,27 @@ terraform {
 
  provider "google" {
    credentials = file("credentials.json")
-
-   project = local.yaml_data.source
-   region  = "us-central1"
-   zone    = "us-central1-c"
  }
 
- resource "google_monitoring_alert_policy" "alert_policy" {
-   project      = local.yaml_data.source
-   display_name = local.yaml_data.name
-   conditions {
-     display_name = "Condition Display Name"
+resource "google_monitoring_alert_policy" "alert_policy" {
+  for_each = { for item in local.yaml_data : item.source => item }
 
-     condition_threshold {
-       filter     = local.yaml_data.conditions[0].condition_threshold.filter
-       duration   = local.yaml_data.conditions[0].condition_threshold.duration
-       comparison = local.yaml_data.conditions[0].condition_threshold.comparison
-       aggregations {
-         alignment_period = "60s"
-         per_series_aligner = "ALIGN_RATE"  # required
-       }
-     }
-   }
-   combiner = "OR"
-   enabled  = true
- }
+  project      = each.value.source
+  display_name = each.value.name
+  conditions {
+    display_name = "Condition Display Name"
 
+    condition_threshold {
+      filter     = each.value.conditions[0].condition_threshold.filter
+      duration   = each.value.conditions[0].condition_threshold.duration
+      comparison = each.value.conditions[0].condition_threshold.comparison
+
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_RATE"
+      }
+    }
+  }
+  combiner = "OR"
+  enabled  = true
+}

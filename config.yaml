@@ -1,7 +1,15 @@
-name: "alertpolicy"
-source: "gci-test-402914"
-conditions:
-  - condition_threshold:
-      filter: "metric.type=\"compute.googleapis.com/instance/disk/write_bytes_count\" AND resource.type=\"gce_instance\""
-      duration: "60s"
-      comparison: "COMPARISON_GT"
+---
+- name: "alertpolicy1"
+  source: "gci-test-402914"
+  conditions:
+    - condition_threshold:
+        filter: "metric.type=\"compute.googleapis.com/instance/disk/write_bytes_count\" AND resource.type=\"gce_instance\""
+        duration: "60s"
+        comparison: "COMPARISON_GT"
+- name: "alertpolicy2"
+  source: "gci-test-2"
+  conditions:
+    - condition_threshold:
+        filter: "metric.type=\"compute.googleapis.com/instance/disk/write_bytes_count\" AND resource.type=\"gce_instance\""
+        duration: "60s"
+        comparison: "COMPARISON_GT"
